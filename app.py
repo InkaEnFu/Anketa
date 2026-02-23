@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 import config
 import database
 
@@ -31,7 +31,11 @@ def build_results_data():
 # ------------------------------------------------------------------
 @app.route("/", methods=["GET", "POST"])
 def index():
+    already_voted = session.get("voted", False)
     if request.method == "POST":
+        if already_voted:
+            flash("Už jsi hlasoval/a. Každý může hlasovat pouze jednou.", "warning")
+            return redirect(url_for("results"))
         option_id = request.form.get("option")
         if not option_id:
             flash("Vyber prosím jednu možnost.", "warning")
@@ -40,11 +44,13 @@ def index():
         if not success:
             flash("Neplatná možnost.", "danger")
             return redirect(url_for("index"))
+        session["voted"] = True
         flash("Tvůj hlas byl uložen!", "success")
         return redirect(url_for("results"))
     return render_template("index.html",
                            question=config.QUESTION,
-                           options=config.OPTIONS)
+                           options=config.OPTIONS,
+                           already_voted=already_voted)
 
 
 # ------------------------------------------------------------------

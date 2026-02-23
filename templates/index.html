@@ -4,6 +4,10 @@
 {% block content %}
 <div class="card">
     <h1>{{ question }}</h1>
+    {% if already_voted %}
+    <div class="alert alert-warning">Už jsi hlasoval/a. Každý může hlasovat pouze jednou.</div>
+    <a href="{{ url_for('results') }}" class="btn btn-primary">Zobrazit výsledky</a>
+    {% else %}
     <form method="POST" action="{{ url_for('index') }}">
         <ul class="options">
             {% for opt in options %}
@@ -17,6 +21,7 @@
         </ul>
         <button type="submit" class="btn btn-primary">Hlasovat</button>
     </form>
+    {% endif %}
     <p class="hint"><a href="{{ url_for('results') }}">Zobrazit výsledky bez hlasování →</a></p>
 </div>
 {% endblock %}
