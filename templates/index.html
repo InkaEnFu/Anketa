@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Hlasování{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>{{ question }}</h1>
+    <form method="POST" action="{{ url_for('index') }}">
+        <ul class="options">
+            {% for opt in options %}
+            <li>
+                <label>
+                    <input type="radio" name="option" value="{{ opt.id }}" required />
+                    {{ opt.label }}
+                </label>
+            </li>
+            {% endfor %}
+        </ul>
+        <button type="submit" class="btn btn-primary">Hlasovat</button>
+    </form>
+    <p class="hint"><a href="{{ url_for('results') }}">Zobrazit výsledky bez hlasování →</a></p>
+</div>
+{% endblock %}

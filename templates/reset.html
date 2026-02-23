@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Reset hlasování{% endblock %}
+
+{% block content %}
+<div class="card card-narrow">
+    <h1>🔄 Reset hlasování</h1>
+    <p>Pro vynulování všech hlasů zadej správný token.</p>
+    <form method="POST" action="{{ url_for('reset') }}">
+        <label for="token">Token:</label>
+        <input type="password" id="token" name="token" placeholder="Zadej reset token" required />
+        <button type="submit" class="btn btn-danger">Resetovat hlasování</button>
+    </form>
+    <p class="hint"><a href="{{ url_for('results') }}">← Zpět na výsledky</a></p>
+</div>
+{% endblock %}

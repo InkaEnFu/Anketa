@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Výsledky{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Výsledky: {{ question }}</h1>
+    <p class="total">Celkový počet hlasů: <strong>{{ total }}</strong></p>
+
+    <ul class="results">
+        {% for r in results %}
+        <li>
+            <span class="option-label">{{ r.label }}</span>
+            <div class="bar-wrap">
+                <div class="bar" style="width: {{ r.percent }}%"></div>
+            </div>
+            <span class="stat">{{ r.count }} hlasů ({{ r.percent }}%)</span>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ url_for('index') }}" class="btn btn-primary">Zpět na hlasování</a>
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}O anketě{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>ℹ O anketě</h1>
+
+    <section>
+        <h2>Co tato anketa zjišťuje?</h2>
+        <p>
+            Tato webová anketa se ptá na jednoduchou otázku: <strong>Jakou máš značku telefonu?</strong>
+            Cílem je zjistit, jaké telefony lidé ve svém okolí používají.
+            Anketa vznikla jako školní projekt pro předmět Webové aplikace v roce 2026.
+        </p>
+    </section>
+
+    <section>
+        <h2>Jak hlasování funguje?</h2>
+        <p>
+            Každý návštěvník může jednou kliknout na svou oblíbenou odpověď a odeslat hlas.
+            Hlasy jsou uloženy v databázi na serveru a jsou sdílené mezi všemi uživateli.
+            Výsledky se zobrazují okamžitě po odeslání hlasu nebo na stránce Výsledky.
+        </p>
+    </section>
+
+    <section>
+        <h2>Technické informace</h2>
+        <ul>
+            <li>Backend: Python 3 + Flask</li>
+            <li>Databáze: SQLite</li>
+            <li>Hosting: PythonAnywhere</li>
+            <li>Zdrojový kód: dostupný na GitHubu (viz README)</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Našel jsi chybu?</h2>
+        <p>
+            Pokud na stránce najdeš technickou, jazykovou nebo jinou chybu,
+            dej nám prosím vědět. Můžeš to udělat těmito způsoby:
+        </p>
+        <ul>
+            <li>
+                <strong>GitHub Issues:</strong> Otevři nový issue na
+                <a href="https://github.com/InkaEnFu/Anketa/issues" target="_blank" rel="noopener">
+                    github.com/InkaEnFu/Anketa/issues
+                </a>
+                a popiš, co jsi našel.
+            </li>
+            <li>
+                <strong>E-mail:</strong> Napiš na
+                <a href="mailto:anketa@example.com">anketa@example.com</a>
+                s předmětem „Chyba na stránce" a stručným popisem problému.
+            </li>
+        </ul>
+        <p>
+            Oceníme jakoukoliv zpětnou vazbu – pomůže nám stránku zlepšit!
+        </p>
+    </section>
+</div>
+{% endblock %}

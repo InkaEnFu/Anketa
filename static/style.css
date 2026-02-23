@@ -1,0 +1,227 @@
+/* ============================
+   Základní reset a proměnné
+   ============================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --bg:       #f4f6fb;
+    --surface:  #ffffff;
+    --primary:  #4a6cf7;
+    --primary-dark: #3558e0;
+    --danger:   #e05c5c;
+    --success:  #4caf82;
+    --warning:  #e0a000;
+    --text:     #1a1a2e;
+    --muted:    #6b7280;
+    --radius:   12px;
+    --shadow:   0 4px 20px rgba(74,108,247,.12);
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ============================
+   Navigace
+   ============================ */
+header {
+    background: var(--primary);
+    padding: .8rem 1.5rem;
+}
+
+nav {
+    display: flex;
+    gap: 1.5rem;
+    max-width: 720px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+}
+
+nav a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: .95rem;
+    opacity: .85;
+    transition: opacity .2s;
+}
+
+nav a:hover { opacity: 1; text-decoration: underline; }
+
+/* ============================
+   Hlavní obsah
+   ============================ */
+main {
+    flex: 1;
+    padding: 2rem 1rem;
+    max-width: 720px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* ============================
+   Karta
+   ============================ */
+.card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 2rem;
+}
+
+.card-narrow {
+    max-width: 420px;
+    margin: 0 auto;
+}
+
+h1 {
+    font-size: 1.5rem;
+    margin-bottom: 1.4rem;
+    color: var(--primary);
+}
+
+h2 {
+    font-size: 1.15rem;
+    margin: 1.4rem 0 .6rem;
+    color: var(--text);
+}
+
+section + section { border-top: 1px solid #eee; }
+
+/* ============================
+   Formulář hlasování
+   ============================ */
+.options { list-style: none; display: flex; flex-direction: column; gap: .7rem; margin-bottom: 1.5rem; }
+
+.options li label {
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    cursor: pointer;
+    padding: .7rem 1rem;
+    border: 2px solid #e8eaf0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color .2s, background .2s;
+}
+
+.options li label:hover { border-color: var(--primary); background: #f0f3ff; }
+
+input[type="radio"]:checked + span,
+.options li label:has(input:checked) {
+    border-color: var(--primary);
+    background: #eef1ff;
+}
+
+/* ============================
+   Reset formulář
+   ============================ */
+form label { display: block; margin-bottom: .4rem; font-weight: 600; }
+
+input[type="password"] {
+    width: 100%;
+    padding: .65rem .9rem;
+    border: 2px solid #e8eaf0;
+    border-radius: 8px;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    transition: border-color .2s;
+}
+
+input[type="password"]:focus { outline: none; border-color: var(--primary); }
+
+/* ============================
+   Tlačítka
+   ============================ */
+.btn {
+    display: inline-block;
+    padding: .65rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: filter .2s;
+}
+
+.btn:hover { filter: brightness(.9); }
+
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-danger  { background: var(--danger);  color: #fff; }
+
+/* ============================
+   Výsledky – sloupcový graf
+   ============================ */
+.total { margin-bottom: 1.2rem; color: var(--muted); }
+
+.results { list-style: none; display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem; }
+
+.results li {
+    display: grid;
+    grid-template-columns: 130px 1fr 120px;
+    align-items: center;
+    gap: .6rem;
+}
+
+.option-label { font-weight: 600; font-size: .95rem; }
+
+.bar-wrap {
+    background: #e8eaf0;
+    border-radius: 99px;
+    height: 18px;
+    overflow: hidden;
+}
+
+.bar {
+    height: 100%;
+    background: var(--primary);
+    border-radius: 99px;
+    min-width: 2px;
+    transition: width .5s ease;
+}
+
+.stat { font-size: .9rem; color: var(--muted); text-align: right; }
+
+/* ============================
+   Flash zprávy
+   ============================ */
+.alert {
+    padding: .75rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.alert-success { background: #d4f4e8; color: #1a6640; }
+.alert-danger  { background: #fde8e8; color: #7a1a1a; }
+.alert-warning { background: #fff3cd; color: #7a5200; }
+
+/* ============================
+   Nápověda / drobný text
+   ============================ */
+.hint { margin-top: 1rem; font-size: .9rem; color: var(--muted); }
+.hint a { color: var(--primary); }
+
+/* ============================
+   Footer
+   ============================ */
+footer {
+    text-align: center;
+    padding: 1rem;
+    font-size: .85rem;
+    color: var(--muted);
+}
+
+/* ============================
+   Responsive
+   ============================ */
+@media (max-width: 560px) {
+    .results li { grid-template-columns: 1fr; }
+    .stat { text-align: left; }
+}
