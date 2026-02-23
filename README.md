@@ -35,63 +35,14 @@ Jednoduchá webová anketa vytvořená jako školní projekt (WA, 2026).
 ## Wireframe
 
 ```
-┌──────────────────────────────────────────────┐
-│  NAV: [Hlasovat] [Výsledky] [Reset] [O anketě]│
-├──────────────────────────────────────────────┤
-│                                              │
-│  Jakou máš značku telefonu?                 │
-│                                              │
-│  ( ) a) iPhone                              │
-│  ( ) b) Samsung                             │
-│  ( ) c) Huawei                              │
-│  ( ) d) Xiaomi                              │
-│  ( ) e) Jiné                                │
-│                                              │
-│  [ Hlasovat ]                               │
-│  Zobrazit výsledky bez hlasování →          │
-│                                              │
-└──────────────────────────────────────────────┘
-
-Výsledky:
-┌──────────────────────────────────────────────┐
-│  Výsledky: Jakou máš značku telefonu?        │
-│  Celkový počet hlasů: 42                     │
-│                                              │
-│  a) iPhone  ████████████░░░░  15 (36%)       │
-│  b) Samsung ██████░░░░░░░░░░  10 (24%)       │
-│  c) Huawei  ████░░░░░░░░░░░░   7 (17%)       │
-│  d) Xiaomi  ████░░░░░░░░░░░░   6 (14%)       │
-│  e) Jiné    ███░░░░░░░░░░░░░   4 (10%)       │
-│                                              │
-│  [ Zpět na hlasování ]                      │
-└──────────────────────────────────────────────┘
+wireframe.png v /diagrams
 ```
 
 ---
 
 ## Deployment diagram
 
-```
-┌──────────────┐   HTTP request    ┌────────────────────────────┐
-│   Uživatel   │ ────────────────► │   PythonAnywhere           │
-│  (prohlížeč) │                   │                            │
-│              │ ◄──────────────── │  Flask app (app.py)        │
-└──────────────┘   HTML response   │       │                    │
-                                   │       ▼                    │
-                                   │  database.py               │
-                                   │       │                    │
-                                   │       ▼                    │
-                                   │  anketa.db (SQLite)        │
-                                   └────────────────────────────┘
-                                             ▲
-                              ping každých   │
-                              5 minut        │
-┌──────────────┐                  ┌──────────┴──────────┐
-│ UptimeRobot  │ ───────────────► │  /  (HTTP 200?)     │
-│  monitoring  │                  └─────────────────────┘
-│              │ alert e-mail/SMS
-└──────────────┘
-```
+deployment.png v /diagrams
 
 ---
 
@@ -134,7 +85,7 @@ Anketa/
 
 ```bash
 # 1. Klonuj repozitář
-git clone https://github.com/InkaEnFu/Anketa.git
+git clone https://github.com/Inkaenfu/Anketa.git
 cd Anketa
 
 # 2. Vytvoř a aktivuj virtualenv
@@ -165,7 +116,7 @@ Aplikace poběží na `http://127.0.0.1:5000`.
 
 2. **Klonuj repozitář:**
    ```bash
-   git clone https://github.com/InkaEnFu/Anketa.git ~/anketa
+   git clone https://github.com/<vaše_jméno>/Anketa.git ~/anketa
    ```
 
 3. **Vytvoř virtualenv:**
@@ -177,18 +128,18 @@ Aplikace poběží na `http://127.0.0.1:5000`.
 4. **Nastav Web App:**
    - Záložka **Web** → **Add a new web app**
    - Vyber **Manual configuration** → **Python 3.11**
-   - Source code: `/home/InkaEnFu/anketa`
-   - Working directory: `/home/InkaEnFu/anketa`
-   - Virtualenv: `/home/InkaEnFu/.virtualenvs/anketa-venv`
+   - Source code: `/home/<vaše_jméno>/anketa`
+   - Working directory: `/home/<vaše_jméno>/anketa`
+   - Virtualenv: `/home/<vaše_jméno>/.virtualenvs/anketa-venv`
 
-5. **Nastav WSGI soubor** (`/var/www/InkaEnFu_pythonanywhere_com_wsgi.py`):
+5. **Nastav WSGI soubor** (`/var/www/<vaše_jméno>_pythonanywhere_com_wsgi.py`):
    ```python
    import sys
-   sys.path.insert(0, '/home/InkaEnFu/anketa')
+   sys.path.insert(0, '/home/<vaše_jméno>/anketa')
    from app import app as application
    ```
 
-6. Klikni **Reload** – aplikace je živá na `InkaEnFu.pythonanywhere.com`.
+6. Klikni **Reload** – aplikace je živá na `<vaše_jméno>.pythonanywhere.com`.
 
 ---
 
@@ -225,14 +176,14 @@ pip install -r requirements.txt
 # 7. Reloadni web app
 # BUĎTO klikni tlačítko Reload v záložce Web
 # NEBO spusť API příkaz:
-touch /var/www/InkaEnFu_pythonanywhere_com_wsgi.py
+touch /var/www/<vaše_jméno>_pythonanywhere_com_wsgi.py
 ```
 
 > **Tip:** Změna `touch` na WSGI soubor způsobí restart aplikace bez nutnosti klikat v prohlížeči.
 
 ### Ověření
 
-8. Otevři `InkaEnFu.pythonanywhere.com` v prohlížeči a ověř, že změna je vidět.
+8. Otevři `<vaše_jméno>.pythonanywhere.com` v prohlížeči a ověř, že změna je vidět.
 9. Zkontroluj **Error log** v záložce Web, pokud aplikace nefunguje.
 
 ---
@@ -260,7 +211,7 @@ Aplikace využívá [UptimeRobot](https://uptimerobot.com/) pro nepřetržité s
 2. Klikni **Add New Monitor**:
    - Type: **HTTP(s)**
    - Friendly Name: `Anketa Telefony`
-   - URL: `https://InkaEnFu.pythonanywhere.com/`
+   - URL: `https://<vaše_jméno>.pythonanywhere.com/`
    - Monitoring Interval: **5 minutes**
 3. Nastav **Alert Contact**:
    - E-mail nebo SMS upozornění, když web přestane odpovídat.
@@ -276,7 +227,17 @@ Aplikace využívá [UptimeRobot](https://uptimerobot.com/) pro nepřetržité s
 ### Diagram monitoringu (součást deployment diagramu výše)
 
 ```
-UptimeRobot → ping každých 5 min → InkaEnFu.pythonanywhere.com
+UptimeRobot → ping každých 5 min → <vaše_jméno>.pythonanywhere.com
      │
      └─ výpadek → e-mail / SMS → správce → Reload na PythonAnywhere
 ```
+
+---
+
+## 🌐 Živá aplikace
+
+Aplikace je veřejně přístupná na:
+
+**https://InkaEnFu.pythonanywhere.com**
+
+Stačí otevřít odkaz v prohlížeči – žádná instalace není potřeba.
