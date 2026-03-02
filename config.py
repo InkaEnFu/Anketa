@@ -1,7 +1,7 @@
 # Konfigurace aplikace
 
 # Reset token – změňte na vlastní tajnou hodnotu
-RESET_TOKEN = "tajny-token-2026"
+RESET_TOKEN = "tajny-token-20266"
 
 # Otázka a možnosti odpovědí
 QUESTION = "Jakou máš značku telefonu?"
