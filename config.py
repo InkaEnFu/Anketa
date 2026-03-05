@@ -1,4 +1,5 @@
 # Konfigurace aplikace
+import os
 
 # Reset token – změňte na vlastní tajnou hodnotu
 RESET_TOKEN = "tajny-token-20266"
@@ -14,5 +15,5 @@ OPTIONS = [
     {"id": "jine",    "label": "e) Jiné"},
 ]
 
-# Cesta k SQLite databázi
-DATABASE_PATH = "anketa.db"
+# Cesta k SQLite databázi – absolutní cesta relativní k tomuto souboru
+DATABASE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "anketa.db")
