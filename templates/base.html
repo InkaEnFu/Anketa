@@ -22,6 +22,7 @@
             <a href="{{ url_for('results') }}">📊 Výsledky</a>
             <a href="{{ url_for('reset') }}">🔄 Reset</a>
             <a href="{{ url_for('about') }}">ℹ O anketě</a>
+            <button id="dark-mode-toggle" class="theme-toggle" title="Přepnout tmavý/světlý režim">🌙</button>
         </nav>
     </header>
 
@@ -38,5 +39,28 @@
     <footer>
         <p>Anketa o značkách telefonů – školní projekt 2026</p>
     </footer>
+
+    <script>
+        (function() {
+            var toggle = document.getElementById('dark-mode-toggle');
+            var stored = localStorage.getItem('theme');
+            if (stored === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                toggle.textContent = '☀️';
+            }
+            toggle.addEventListener('click', function() {
+                var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                if (isDark) {
+                    document.documentElement.removeAttribute('data-theme');
+                    localStorage.setItem('theme', 'light');
+                    toggle.textContent = '🌙';
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                    toggle.textContent = '☀️';
+                }
+            });
+        })();
+    </script>
 </body>
 </html>

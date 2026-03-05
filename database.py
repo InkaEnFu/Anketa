@@ -18,6 +18,19 @@ def init_db():
             count     INTEGER NOT NULL DEFAULT 0
         )
     """)
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS custom_brands (
+            id    INTEGER PRIMARY KEY AUTOINCREMENT,
+            brand TEXT NOT NULL
+        )
+    """)
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS captcha_attempts (
+            ip          TEXT PRIMARY KEY,
+            attempts    INTEGER NOT NULL DEFAULT 0,
+            locked_until REAL NOT NULL DEFAULT 0
+        )
+    """)
     # Zajistí, že každá možnost z konfigurace má v DB řádek
     for opt in config.OPTIONS:
         cur.execute(
@@ -59,5 +72,79 @@ def reset_votes():
     conn = get_connection()
     cur = conn.cursor()
     cur.execute("UPDATE votes SET count = 0")
+    cur.execute("DELETE FROM custom_brands")
     conn.commit()
     conn.close()
+
+
+def add_custom_brand(brand):
+    """Uloží název vlastní značky telefonu."""
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("INSERT INTO custom_brands (brand) VALUES (?)", (brand,))
+    conn.commit()
+    conn.close()
+
+
+def get_captcha_state(ip):
+    """Vrátí (attempts, locked_until) pro danou IP."""
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT attempts, locked_until FROM captcha_attempts WHERE ip = ?", (ip,))
+    row = cur.fetchone()
+    conn.close()
+    if row:
+        return row["attempts"], row["locked_until"]
+    return 0, 0.0
+
+
+def record_captcha_failure(ip, max_attempts, lockout_seconds):
+    """
+    Zaznamená neúspěšný pokus pro IP.
+    Pokud počet dosáhne max_attempts, nastaví locked_until.
+    Vrátí (locked, locked_until, remaining_attempts).
+    """
+    import time
+    now = time.time()
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        "INSERT INTO captcha_attempts (ip, attempts, locked_until) VALUES (?, 1, 0) "
+        "ON CONFLICT(ip) DO UPDATE SET attempts = attempts + 1",
+        (ip,)
+    )
+    cur.execute("SELECT attempts FROM captcha_attempts WHERE ip = ?", (ip,))
+    attempts = cur.fetchone()["attempts"]
+
+    locked_until = 0.0
+    if attempts >= max_attempts:
+        locked_until = now + lockout_seconds
+        cur.execute(
+            "UPDATE captcha_attempts SET attempts = 0, locked_until = ? WHERE ip = ?",
+            (locked_until, ip)
+        )
+
+    conn.commit()
+    conn.close()
+    locked = locked_until > 0
+    remaining_attempts = max(0, max_attempts - attempts)
+    return locked, locked_until, remaining_attempts
+
+
+def clear_captcha_attempts(ip):
+    """Vymaže záznamy po úspěšném ověření."""
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("DELETE FROM captcha_attempts WHERE ip = ?", (ip,))
+    conn.commit()
+    conn.close()
+
+
+def get_custom_brands():
+    """Vrátí seznam vlastních značek."""
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT brand FROM custom_brands ORDER BY id DESC")
+    rows = cur.fetchall()
+    conn.close()
+    return [row["brand"] for row in rows]

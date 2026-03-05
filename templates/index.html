@@ -2,6 +2,149 @@
 {% block title %}Hlasování{% endblock %}
 
 {% block content %}
+
+{% if not already_voted and not captcha_verified %}
+<!-- CAPTCHA modal overlay -->
+<div id="captcha-overlay" class="captcha-overlay">
+    <div class="captcha-modal">
+
+        {% if captcha_locked %}
+        <!-- ZABLOKOVANÝ stav (server-side) -->
+        <div class="captcha-modal-header">
+            <span class="captcha-logo">🔒</span>
+            <div>
+                <strong>Přístup dočasně zablokován</strong>
+                <p>Příliš mnoho nesprávných pokusů</p>
+            </div>
+        </div>
+        <p class="captcha-lock-msg">
+            Zkus to znovu za <span id="lock-countdown"><strong>{{ lock_remaining }}</strong></span> s.
+        </p>
+        <script>
+            (function() {
+                var secs = {{ lock_remaining }};
+                var el = document.getElementById('lock-countdown');
+                var iv = setInterval(function() {
+                    secs--;
+                    if (secs <= 0) {
+                        clearInterval(iv);
+                        window.location.reload();
+                    } else {
+                        el.innerHTML = '<strong>' + secs + '</strong> s';
+                    }
+                }, 1000);
+            })();
+        </script>
+
+        {% else %}
+        <!-- Normální CAPTCHA stav -->
+        <div class="captcha-modal-header">
+            <span class="captcha-logo">🤖</span>
+            <div>
+                <strong>Ověření identity</strong>
+                <p>Přepište znaky z obrázku</p>
+            </div>
+        </div>
+
+        <div class="captcha-img-wrap">
+            <img id="captcha-img" src="{{ url_for('captcha_image') }}" alt="CAPTCHA obrázek" />
+            <button type="button" id="captcha-refresh" class="captcha-refresh-btn" title="Nový obrázek">🔄</button>
+        </div>
+
+        <input type="text" id="captcha-input" class="captcha-input"
+               placeholder="Zadej 5 znaků" maxlength="5" autocomplete="off"
+               autocorrect="off" autocapitalize="characters" spellcheck="false" />
+
+        <p id="captcha-error" class="captcha-error" hidden></p>
+
+        <button type="button" id="captcha-submit" class="btn btn-primary captcha-btn">Ověřit</button>
+
+        <p class="captcha-hint">Nerozlišujeme velká a malá písmena</p>
+
+        <script>
+            (function() {
+                var overlay = document.getElementById('captcha-overlay');
+                var img    = document.getElementById('captcha-img');
+                var input  = document.getElementById('captcha-input');
+                var errMsg = document.getElementById('captcha-error');
+                var btn    = document.getElementById('captcha-submit');
+
+                function refreshImg() {
+                    img.src = "{{ url_for('captcha_image') }}?" + Date.now();
+                    input.value = '';
+                    input.focus();
+                }
+
+                document.getElementById('captcha-refresh').addEventListener('click', function() {
+                    errMsg.hidden = true;
+                    refreshImg();
+                });
+
+                function showLockout(seconds) {
+                    // Nahradit obsah modálu za lockout obrazovku
+                    var modal = overlay.querySelector('.captcha-modal');
+                    var remaining = seconds;
+                    modal.innerHTML =
+                        '<div class="captcha-modal-header">' +
+                        '  <span class="captcha-logo">🔒</span>' +
+                        '  <div><strong>Přístup dočasně zablokován</strong>' +
+                        '  <p>Příliš mnoho nesprávných pokusů</p></div></div>' +
+                        '<p class="captcha-lock-msg">Zkus to znovu za ' +
+                        '<span id="lock-countdown"><strong>' + remaining + '</strong> s</span>.</p>';
+                    var iv = setInterval(function() {
+                        remaining--;
+                        var el = document.getElementById('lock-countdown');
+                        if (remaining <= 0) {
+                            clearInterval(iv);
+                            window.location.reload();
+                        } else if (el) {
+                            el.innerHTML = '<strong>' + remaining + '</strong> s';
+                        }
+                    }, 1000);
+                }
+
+                function submitCaptcha() {
+                    btn.disabled = true;
+                    var fd = new FormData();
+                    fd.append('captcha_input', input.value);
+                    fetch("{{ url_for('verify_captcha') }}", { method: 'POST', body: fd })
+                        .then(function(r) { return r.json().then(function(d) { return {status: r.status, data: d}; }); })
+                        .then(function(res) {
+                            if (res.data.ok) {
+                                overlay.classList.add('captcha-overlay--out');
+                                setTimeout(function() { overlay.remove(); }, 350);
+                            } else if (res.data.locked) {
+                                showLockout(res.data.remaining);
+                            } else {
+                                var attemptsLeft = res.data.remaining_attempts;
+                                errMsg.textContent = '❌ Špatně. Zbývá ' + attemptsLeft + ' ' +
+                                    (attemptsLeft === 1 ? 'pokus' : (attemptsLeft < 5 ? 'pokusy' : 'pokusů')) + '.';
+                                errMsg.hidden = false;
+                                refreshImg();
+                                btn.disabled = false;
+                            }
+                        })
+                        .catch(function() {
+                            errMsg.textContent = '❌ Chyba připojení, zkus znovu.';
+                            errMsg.hidden = false;
+                            btn.disabled = false;
+                        });
+                }
+
+                btn.addEventListener('click', submitCaptcha);
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') submitCaptcha();
+                });
+
+                input.focus();
+            })();
+        </script>
+        {% endif %}
+
+    </div>
+</div>
+{% endif %}
+
 <div class="card">
     <h1>{{ question }}</h1>
     {% if already_voted %}
@@ -19,8 +162,23 @@
             </li>
             {% endfor %}
         </ul>
+
+        <div id="custom-brand-wrap" style="display:none; margin-bottom: 1rem;">
+            <label for="custom_brand">Uveďte značku:</label>
+            <input type="text" id="custom_brand" name="custom_brand" placeholder="Např. OnePlus, Nothing…" maxlength="100" />
+        </div>
+
         <button type="submit" class="btn btn-primary">Hlasovat</button>
     </form>
+
+    <script>
+        document.querySelectorAll('input[name="option"]').forEach(function(radio) {
+            radio.addEventListener('change', function() {
+                document.getElementById('custom-brand-wrap').style.display =
+                    this.value === 'jine' ? 'block' : 'none';
+            });
+        });
+    </script>
     {% endif %}
     <p class="hint"><a href="{{ url_for('results') }}">Zobrazit výsledky bez hlasování →</a></p>
 </div>
