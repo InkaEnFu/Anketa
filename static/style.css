@@ -436,6 +436,12 @@ footer {
     background: #262640;
 }
 
+[data-theme="dark"] .options li label:has(input:checked) {
+    border-color: var(--primary);
+    background: #262640;
+    color: #ffffff;
+}
+
 [data-theme="dark"] input[type="password"],
 [data-theme="dark"] input[type="number"],
 [data-theme="dark"] input[type="text"] {
