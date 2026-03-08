@@ -13,6 +13,14 @@ app.secret_key = "flask-anketa-secret-2026"
 # Inicializace databáze při startu aplikace
 database.init_db()
 
+
+@app.after_request
+def set_security_headers(response):
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    return response
+
+
 CAPTCHA_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"  # bez I, 0, O, 1
 CAPTCHA_MAX_ATTEMPTS = 3
 CAPTCHA_LOCKOUT_SECONDS = 600  # 10 minut
